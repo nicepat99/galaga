@@ -76,6 +76,16 @@ function createEnemies() {
 
     for (let row = 0; row < enemyRows; row++) {
         for (let col = 0; col < enemyCols; col++) {
+                let type;
+
+                if (row === 0) {
+                        type = "boss";
+                } else if (row === 1) {
+                        type = "butterfly";
+                } else {
+                        type = "bee";
+                }
+
                 enemies.push({
                         //x: startX + col * (enemyWidth + enemyGap),
                         x: canvas.width / 2,
@@ -87,6 +97,8 @@ function createEnemies() {
 
                         width: enemyWidth,
                         height: enemyHeight,
+
+                        type: type,
 
                         state: "entering",
 
@@ -296,7 +308,13 @@ function checkBulletEnemyCollisions() {
 
                 bullets.splice(i, 1);
                 enemies.splice(j, 1);
-                score += 100;
+                if (enemy.type === "boss") {
+                        score += 300;
+                } else if (enemy.type === "butterfly") {
+                        score += 200;
+                } else {
+                        score += 100;
+                }
 
                 if (score > highScore) {
                         highScore = score;
@@ -586,7 +604,21 @@ function drawEnemy(enemy) {
     const diving = enemy.state === "diving";
 
     // 몸통
-    ctx.fillStyle = diving ? "orange" : "red";
+    let bodyColor;
+
+        if (enemy.type === "boss") {
+                bodyColor = "green";
+        } else if (enemy.type === "butterfly") {
+                bodyColor = "red";
+        } else {
+                bodyColor = "blue";
+        }
+
+        if (diving) {
+                bodyColor = "orange";
+        }
+
+        ctx.fillStyle = bodyColor;
 
     ctx.fillRect(
         x + w * 0.35,
