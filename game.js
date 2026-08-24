@@ -99,6 +99,7 @@ function createEnemies() {
                         height: enemyHeight,
 
                         type: type,
+                        hitsRemaining: type === "boss" ? 2 : 1,
 
                         state: "entering",
 
@@ -299,26 +300,41 @@ function checkBulletEnemyCollisions() {
                 bullet.y + bullet.height > enemy.y;
 
             if (hit) {
+                bullets.splice(i, 1);
+
+                enemy.hitsRemaining--;
+
                 createExplosion(
-                        enemy.x + enemy.width / 2,
-                        enemy.y + enemy.height / 2
+                    enemy.x + enemy.width / 2,
+                    enemy.y + enemy.height / 2
                 );
 
-                playTone(180, 0.15, "sawtooth", 0.06);
+                playTone(
+                    180,
+                    0.15,
+                    "sawtooth",
+                    0.06
+                );
 
-                bullets.splice(i, 1);
-                enemies.splice(j, 1);
-                if (enemy.type === "boss") {
+                if (enemy.hitsRemaining <= 0) {
+                    if (enemy.type === "boss") {
                         score += 300;
-                } else if (enemy.type === "butterfly") {
+                    } else if (enemy.type === "butterfly") {
                         score += 200;
-                } else {
+                    } else {
                         score += 100;
-                }
+                    }
 
-                if (score > highScore) {
+                    enemies.splice(j, 1);
+
+                    if (score > highScore) {
                         highScore = score;
-                        localStorage.setItem("galagaHighScore", highScore);
+
+                        localStorage.setItem(
+                            "galagaHighScore",
+                            highScore
+                        );
+                    }
                 }
 
                 break;
@@ -606,15 +622,18 @@ function drawEnemy(enemy) {
     // 몸통
     let bodyColor;
 
-        if (enemy.type === "boss") {
-                bodyColor = "green";
+    if (enemy.type === "boss") {
+        bodyColor =
+                enemy.hitsRemaining === 1
+                ? "yellow"
+                : "green";
         } else if (enemy.type === "butterfly") {
                 bodyColor = "red";
         } else {
                 bodyColor = "blue";
         }
 
-        if (diving) {
+        if (diving && enemy.type !== "boss") {
                 bodyColor = "orange";
         }
 
