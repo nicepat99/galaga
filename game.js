@@ -77,8 +77,10 @@ function createEnemies() {
     for (let row = 0; row < enemyRows; row++) {
         for (let col = 0; col < enemyCols; col++) {
                 enemies.push({
-                        x: startX + col * (enemyWidth + enemyGap),
-                        y: -100 - row * 30,
+                        //x: startX + col * (enemyWidth + enemyGap),
+                        x: canvas.width / 2,
+                        //y: -100 - row * 30,
+                        y: -80 - row * 25,
 
                         homeX: startX + col * (enemyWidth + enemyGap),
                         homeY: startY + row * (enemyHeight + enemyGap),
@@ -89,6 +91,11 @@ function createEnemies() {
                         state: "entering",
 
                         entryDelay: row * 150 + col * 90,
+                        entryTime: 0,
+                        entryStartX: 0,
+                        entryStartY: 0,
+
+                        rotation: 0,
 
                         diveSpeed: 3,
                         diveTargetX: 0,
@@ -336,20 +343,45 @@ function updateEnemies(timestamp) {
     for (const enemy of enemies) {
 
         if (enemy.state === "entering") {
-            const elapsed = timestamp - stageStartedAt;
+                const elapsed = timestamp - stageStartedAt;
 
-            if (elapsed >= enemy.entryDelay) {
-                enemy.y += 4;
+                if (elapsed >= enemy.entryDelay) {
 
-                if (enemy.y >= enemy.homeY) {
-                    enemy.y = enemy.homeY;
-                    enemy.x = enemy.homeX;
-                    enemy.state = "formation";
+                        if (enemy.entryTime === 0) {
+                        enemy.entryStartX = enemy.x;
+                        enemy.entryStartY = enemy.y;
+                        }
+
+                        enemy.entryTime += 0.025;
+
+                        const t = Math.min(enemy.entryTime, 1);
+
+                        const curve =
+                        Math.sin(t * Math.PI) * 120;
+
+                        enemy.x =
+                        enemy.entryStartX +
+                        (enemy.homeX - enemy.entryStartX) * t +
+                        curve * (enemy.homeX < canvas.width / 2 ? -1 : 1);
+
+                        enemy.y =
+                        enemy.entryStartY +
+                        (enemy.homeY - enemy.entryStartY) * t;
+
+                        enemy.rotation =
+                                Math.sin(t * Math.PI) * 0.8;
+
+                        if (t >= 1) {
+                        enemy.x = enemy.homeX;
+                        enemy.y = enemy.homeY;
+                        enemy.rotation = 0;
+                        enemy.state = "formation";
+                        enemy.entryTime = 0;
+                        }
                 }
-            }
 
-            continue;
-        }
+                continue;
+                }
 
         if (enemy.state === "formation") {
             enemy.x += enemySpeed * enemyDirection;
@@ -537,6 +569,20 @@ function drawEnemy(enemy) {
     const w = enemy.width;
     const h = enemy.height;
 
+    ctx.save();
+
+    ctx.translate(
+        x + w / 2,
+        y + h / 2
+    );
+
+    ctx.rotate(enemy.rotation || 0);
+
+    ctx.translate(
+        -(x + w / 2),
+        -(y + h / 2)
+    );
+
     const diving = enemy.state === "diving";
 
     // 몸통
@@ -620,6 +666,8 @@ function drawEnemy(enemy) {
         w * 0.12,
         h * 0.25
     );
+
+    ctx.restore();
 }
 
 function draw() {
