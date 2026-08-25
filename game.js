@@ -487,10 +487,26 @@ function startEnemyDive() {
         return;
     }
 
-    const index =
-        Math.floor(Math.random() * formationEnemies.length);
+    const weightedEnemies = [];
 
-    const enemy = formationEnemies[index];
+    for (const enemy of formationEnemies) {
+        let weight = 1;
+
+        if (enemy.type === "boss") {
+            weight = 3;
+        } else if (enemy.type === "butterfly") {
+            weight = 2;
+        }
+
+        for (let i = 0; i < weight; i++) {
+            weightedEnemies.push(enemy);
+        }
+    }
+
+    const index =
+        Math.floor(Math.random() * weightedEnemies.length);
+
+    const enemy = weightedEnemies[index];
 
     enemy.state = "diving";
 
