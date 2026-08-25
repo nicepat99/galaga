@@ -1131,9 +1131,24 @@ function fireEnemyBullet(enemy) {
     const dx =
         targetX - startX;
 
-    let vx = dx * 0.02;
+    let aimFactor = 0.012;
+
+    if (enemy.type === "boss") {
+        aimFactor = 0.025;
+    } else if (enemy.type === "butterfly") {
+        aimFactor = 0.018;
+    }
+
+    let vx = dx * aimFactor;
 
     vx = Math.max(-3, Math.min(3, vx));
+
+    const vy =
+        enemy.type === "boss"
+            ? 4.8
+            : enemy.type === "butterfly"
+                ? 4.3
+                : 4;
 
     enemyBullets.push({
         x: startX - 2,
@@ -1141,7 +1156,8 @@ function fireEnemyBullet(enemy) {
         width: 4,
         height: 14,
         vx: vx,
-        vy: 4
+        vy: vy,
+        type: enemy.type
     });
 }
 
@@ -1179,7 +1195,12 @@ function drawEnemyBullets() {
         ctx.translate(centerX, centerY);
         ctx.rotate(angle);
 
-        ctx.shadowColor = "lime";
+        ctx.shadowColor =
+        bullet.type === "boss"
+                ? "red"
+                : bullet.type === "butterfly"
+                ? "orange"
+                : "lime";
         ctx.shadowBlur = 12;
 
         ctx.fillStyle = "white";
@@ -1187,7 +1208,12 @@ function drawEnemyBullets() {
         ctx.arc(0, 0, 3, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "lime";
+        ctx.fillStyle =
+        bullet.type === "boss"
+                ? "red"
+                : bullet.type === "butterfly"
+                ? "orange"
+                : "lime";
         ctx.fillRect(
             -1,
             -bullet.height / 2,
