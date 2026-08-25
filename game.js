@@ -317,24 +317,42 @@ function checkBulletEnemyCollisions() {
                 );
 
                 if (enemy.hitsRemaining <= 0) {
-                    if (enemy.type === "boss") {
-                        score += 300;
-                    } else if (enemy.type === "butterfly") {
-                        score += 200;
-                    } else {
-                        score += 100;
-                    }
 
-                    enemies.splice(j, 1);
+                        if (enemy.type === "boss") {
 
-                    if (score > highScore) {
-                        highScore = score;
+                                if (enemy.state === "diving") {
+                                score += 600;
+                                } else {
+                                score += 300;
+                                }
 
-                        localStorage.setItem(
-                            "galagaHighScore",
-                            highScore
-                        );
-                    }
+                        } else if (enemy.type === "butterfly") {
+
+                                if (enemy.state === "diving") {
+                                score += 400;
+                                } else {
+                                score += 200;
+                                }
+
+                        } else {
+
+                                if (enemy.state === "diving") {
+                                score += 200;
+                                } else {
+                                score += 100;
+                                }
+                        }
+
+                        enemies.splice(j, 1);
+
+                        if (score > highScore) {
+                                highScore = score;
+
+                                localStorage.setItem(
+                                "galagaHighScore",
+                                highScore
+                                );
+                        }
                 }
 
                 break;
