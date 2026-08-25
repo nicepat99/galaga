@@ -283,8 +283,6 @@ function restartGame() {
     stageTransitionUntil = 0;
 
     paused = false;
-
-    paused = false;
     pauseStartedAt = 0;
     
     resetPlayer();
@@ -485,7 +483,7 @@ function updateEnemies(timestamp) {
             if (Math.random() < 0.008) {
                 fireEnemyBullet(enemy);
                 }
-                
+
             if (enemy.y > canvas.height) {
                 enemy.state = "formation";
                 enemy.y = enemy.homeY;
@@ -1121,20 +1119,44 @@ function drawExplosions() {
 }
 
 function fireEnemyBullet(enemy) {
+    const startX =
+        enemy.x + enemy.width / 2;
+
+    const startY =
+        enemy.y + enemy.height;
+
+    const targetX =
+        player.x + player.width / 2;
+
+    const dx =
+        targetX - startX;
+
+    let vx = dx * 0.02;
+
+    vx = Math.max(-3, Math.min(3, vx));
+
     enemyBullets.push({
-        x: enemy.x + enemy.width / 2 - 2,
-        y: enemy.y + enemy.height,
+        x: startX - 2,
+        y: startY,
         width: 4,
         height: 14,
-        speed: 4
+        vx: vx,
+        vy: 4
     });
 }
 
 function updateEnemyBullets() {
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
-        enemyBullets[i].y += enemyBullets[i].speed;
+        const bullet = enemyBullets[i];
 
-        if (enemyBullets[i].y > canvas.height) {
+        bullet.x += bullet.vx;
+        bullet.y += bullet.vy;
+
+        if (
+            bullet.y > canvas.height ||
+            bullet.x < -20 ||
+            bullet.x > canvas.width + 20
+        ) {
             enemyBullets.splice(i, 1);
         }
     }
@@ -1144,27 +1166,31 @@ function drawEnemyBullets() {
     for (const bullet of enemyBullets) {
         ctx.save();
 
-        // 바깥쪽 glow
+        const centerX =
+            bullet.x + bullet.width / 2;
+
+        const centerY =
+            bullet.y + bullet.height / 2;
+
+        const angle =
+            Math.atan2(bullet.vy, bullet.vx) -
+            Math.PI / 2;
+
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle);
+
         ctx.shadowColor = "lime";
         ctx.shadowBlur = 12;
 
-        // 탄 중심
         ctx.fillStyle = "white";
         ctx.beginPath();
-        ctx.arc(
-            bullet.x + bullet.width / 2,
-            bullet.y + bullet.height / 2,
-            3,
-            0,
-            Math.PI * 2
-        );
+        ctx.arc(0, 0, 3, 0, Math.PI * 2);
         ctx.fill();
 
-        // 꼬리
         ctx.fillStyle = "lime";
         ctx.fillRect(
-            bullet.x + bullet.width / 2 - 1,
-            bullet.y,
+            -1,
+            -bullet.height / 2,
             2,
             bullet.height
         );
