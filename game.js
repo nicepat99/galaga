@@ -110,7 +110,12 @@ function createEnemies() {
 
                         rotation: 0,
 
-                        diveSpeed: 3,
+                        diveSpeed:
+                                type === "boss"
+                                        ? 4.2
+                                        : type === "butterfly"
+                                        ? 3.5
+                                        : 3,
                         diveTargetX: 0,
                         diveStartX: 0,
                         diveTime: 0
@@ -449,11 +454,28 @@ function updateEnemies(timestamp) {
         if (enemy.state === "diving") {
             enemy.diveTime += 0.06;
 
-            const wave =
-                Math.sin(enemy.diveTime * 3) * 45;
+            let waveAmount = 45;
 
-            const targetDirection =
-                (enemy.diveTargetX - enemy.diveStartX) * 0.015;
+                if (enemy.type === "boss") {
+                waveAmount = 85;
+                } else if (enemy.type === "butterfly") {
+                waveAmount = 60;
+                }
+
+                const wave =
+                Math.sin(enemy.diveTime * 3) * waveAmount;
+
+            let trackingStrength = 0.015;
+
+                if (enemy.type === "boss") {
+                trackingStrength = 0.025;
+                } else if (enemy.type === "butterfly") {
+                trackingStrength = 0.020;
+                }
+
+                const targetDirection =
+                (enemy.diveTargetX - enemy.diveStartX) *
+                trackingStrength;
 
             enemy.x += targetDirection;
             enemy.x += wave * 0.03;
