@@ -482,6 +482,10 @@ function updateEnemies(timestamp) {
 
             enemy.y += enemy.diveSpeed;
 
+            if (Math.random() < 0.008) {
+                fireEnemyBullet(enemy);
+                }
+                
             if (enemy.y > canvas.height) {
                 enemy.state = "formation";
                 enemy.y = enemy.homeY;
