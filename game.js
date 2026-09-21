@@ -542,6 +542,7 @@ function startEnemyDive() {
 }
 
 function drawPlayer() {
+    // 피격 후 깜빡임
     if (playerInvincible) {
         const blink =
             Math.floor(performance.now() / 100) % 2;
@@ -556,84 +557,299 @@ function drawPlayer() {
     const w = player.width;
     const h = player.height;
 
-    // 중앙 몸통
+    ctx.save();
+
+    // =====================================
+    // MAIN BODY
+    // =====================================
+
     ctx.fillStyle = "white";
+
+    // 긴 중앙 nose
     ctx.fillRect(
-        x + w * 0.42,
+        x + w * 0.46,
+        y - h * 0.45,
+        w * 0.08,
+        h * 0.55
+    );
+
+    // 중앙 상단 body
+    ctx.fillRect(
+        x + w * 0.39,
         y,
-        w * 0.16,
-        h * 0.75
+        w * 0.22,
+        h * 0.38
     );
 
-    // 기수
-    ctx.fillStyle = "cyan";
-    ctx.beginPath();
-    ctx.moveTo(
-        x + w / 2,
-        y - h * 0.25
-    );
-    ctx.lineTo(
-        x + w * 0.38,
-        y + h * 0.15
-    );
-    ctx.lineTo(
-        x + w * 0.62,
-        y + h * 0.15
-    );
-    ctx.closePath();
-    ctx.fill();
 
-    // 왼쪽 날개
-    ctx.fillStyle = "red";
+    // =====================================
+    // INVERTED-V MAIN WINGS
+    // =====================================
+
+    // LEFT WING
     ctx.beginPath();
+
     ctx.moveTo(
-        x + w * 0.42,
-        y + h * 0.30
+        x + w * 0.50,
+        y + h * 0.22
     );
+
+    ctx.lineTo(
+        x + w * 0.34,
+        y + h * 0.32
+    );
+
+    ctx.lineTo(
+        x + w * 0.22,
+        y + h * 0.48
+    );
+
+    ctx.lineTo(
+        x + w * 0.10,
+        y + h * 0.68
+    );
+
     ctx.lineTo(
         x,
-        y + h
+        y + h * 0.92
     );
+
+    ctx.lineTo(
+        x + w * 0.13,
+        y + h * 0.92
+    );
+
+    ctx.lineTo(
+        x + w * 0.25,
+        y + h * 0.72
+    );
+
     ctx.lineTo(
         x + w * 0.38,
-        y + h * 0.75
+        y + h * 0.55
     );
+
+    ctx.lineTo(
+        x + w * 0.50,
+        y + h * 0.48
+    );
+
     ctx.closePath();
     ctx.fill();
 
-    // 오른쪽 날개
+
+    // RIGHT WING
     ctx.beginPath();
+
     ctx.moveTo(
-        x + w * 0.58,
-        y + h * 0.30
+        x + w * 0.50,
+        y + h * 0.22
     );
+
+    ctx.lineTo(
+        x + w * 0.66,
+        y + h * 0.32
+    );
+
+    ctx.lineTo(
+        x + w * 0.78,
+        y + h * 0.48
+    );
+
+    ctx.lineTo(
+        x + w * 0.90,
+        y + h * 0.68
+    );
+
     ctx.lineTo(
         x + w,
-        y + h
+        y + h * 0.92
     );
+
+    ctx.lineTo(
+        x + w * 0.87,
+        y + h * 0.92
+    );
+
+    ctx.lineTo(
+        x + w * 0.75,
+        y + h * 0.72
+    );
+
     ctx.lineTo(
         x + w * 0.62,
-        y + h * 0.75
+        y + h * 0.55
     );
+
+    ctx.lineTo(
+        x + w * 0.50,
+        y + h * 0.48
+    );
+
     ctx.closePath();
     ctx.fill();
 
-    // 엔진
-    ctx.fillStyle = "yellow";
+
+    // =====================================
+    // CENTER BODY
+    // =====================================
+
+    ctx.fillStyle = "white";
 
     ctx.fillRect(
-        x + w * 0.30,
-        y + h * 0.72,
-        w * 0.12,
-        h * 0.20
+        x + w * 0.35,
+        y + h * 0.28,
+        w * 0.30,
+        h * 0.45
+    );
+
+
+    // =====================================
+    // FOUR GUN BARRELS
+    // =====================================
+
+    ctx.fillStyle = "white";
+
+    // far left gun
+    ctx.fillRect(
+        x + w * 0.02,
+        y + h * 0.25,
+        w * 0.08,
+        h * 0.58
+    );
+
+    // inner left gun
+    ctx.fillRect(
+        x + w * 0.22,
+        y + h * 0.10,
+        w * 0.08,
+        h * 0.48
+    );
+
+    // inner right gun
+    ctx.fillRect(
+        x + w * 0.70,
+        y + h * 0.10,
+        w * 0.08,
+        h * 0.48
+    );
+
+    // far right gun
+    ctx.fillRect(
+        x + w * 0.90,
+        y + h * 0.25,
+        w * 0.08,
+        h * 0.58
+    );
+
+
+    // =====================================
+    // RED GUN TIPS
+    // =====================================
+
+    ctx.fillStyle = "red";
+
+    // far left
+    ctx.fillRect(
+        x + w * 0.02,
+        y + h * 0.25,
+        w * 0.08,
+        h * 0.15
+    );
+
+    // inner left
+    ctx.fillRect(
+        x + w * 0.22,
+        y + h * 0.10,
+        w * 0.08,
+        h * 0.15
+    );
+
+    // inner right
+    ctx.fillRect(
+        x + w * 0.70,
+        y + h * 0.10,
+        w * 0.08,
+        h * 0.15
+    );
+
+    // far right
+    ctx.fillRect(
+        x + w * 0.90,
+        y + h * 0.25,
+        w * 0.08,
+        h * 0.15
+    );
+
+
+    // =====================================
+    // BLUE DETAILS
+    // =====================================
+
+    ctx.fillStyle = "blue";
+
+    ctx.fillRect(
+        x + w * 0.27,
+        y + h * 0.38,
+        w * 0.10,
+        h * 0.13
     );
 
     ctx.fillRect(
-        x + w * 0.58,
-        y + h * 0.72,
-        w * 0.12,
-        h * 0.20
+        x + w * 0.63,
+        y + h * 0.38,
+        w * 0.10,
+        h * 0.13
     );
+
+
+    // =====================================
+    // RED CENTER COCKPIT
+    // =====================================
+
+    ctx.fillStyle = "red";
+
+    ctx.fillRect(
+        x + w * 0.43,
+        y + h * 0.38,
+        w * 0.14,
+        h * 0.22
+    );
+
+
+    // =====================================
+    // RED LOWER ENGINE BLOCKS
+    // =====================================
+
+    ctx.fillRect(
+        x + w * 0.27,
+        y + h * 0.68,
+        w * 0.13,
+        h * 0.27
+    );
+
+    ctx.fillRect(
+        x + w * 0.60,
+        y + h * 0.68,
+        w * 0.13,
+        h * 0.27
+    );
+
+
+    // =====================================
+    // CENTER LOWER GUN / TAIL
+    // =====================================
+
+    ctx.fillStyle = "white";
+
+    ctx.fillRect(
+        x + w * 0.47,
+        y + h * 0.55,
+        w * 0.06,
+        h * 0.55
+    );
+
+    ctx.restore();
 }
 
 function drawBullets() {
